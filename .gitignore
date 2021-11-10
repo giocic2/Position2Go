@@ -1,3 +1,7 @@
+# Files under copyright
+documentation/
+include/
+
 # Prerequisites
 *.d
 
