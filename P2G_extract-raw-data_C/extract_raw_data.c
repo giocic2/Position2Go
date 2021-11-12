@@ -43,6 +43,8 @@
 
 #define AUTOMATIC_DATA_TRIGER_TIME_US (1000000)	// get ADC data each 1ms in automatic trigger mode
 
+#define TOTAL_FRAMES (10)
+
 
 // called every time ep_radar_base_get_frame_data method is called to return measured time domain signals
 void received_frame_data(void* context,
@@ -51,10 +53,38 @@ void received_frame_data(void* context,
 						const Frame_Info_t* frame_info)
 {
 	// Print the sampled data which can be found in frame_info->sample_data
+
+	// Original version: only samples of first chirp
+	/*
 	for (uint32_t i = 0; i < frame_info->num_samples_per_chirp; i++)
 	{
 		printf("ADC sample %d: %f\n", i, frame_info->sample_data[i]);
+		if (i==4095){
+			printf("hi\n");
+		}
 	}
+	*/
+
+	// Modified version: samples from all chirps
+	/*
+	for (uint32_t i = 0; i < 4096; i++)
+	{
+		printf("ADC sample %d: %f\n", i, frame_info->sample_data[i]);
+		if (i==4095){
+			printf("hi\n");
+		}
+	}
+	*/
+
+	// Save data to file, without print on terminal
+	int written = 0;
+	FILE *f = fopen("..\\P2G_raw-data_C\\raw-data.dat", "a+");
+	written = fwrite(frame_info->sample_data, sizeof(uint8_t), sizeof(frame_info->sample_data), f);
+	if (written == 0){
+		printf("Error during writing to file!\n");
+	}
+	fclose(f);
+	// better to save in local variable, and then print on file after all frames are acquired
 }
 
 int radar_auto_connect(void)
@@ -102,6 +132,7 @@ int main(void)
 	int res = -1;
 	int protocolHandle = 0;
 	int endpointRadarBase = 0;
+	int frame = 1;
 
 	// open COM port
 	protocolHandle = radar_auto_connect();
@@ -137,14 +168,13 @@ int main(void)
 															endpointRadarBase,
 															0);
 		}
-
 		while (1)
 		{
 			// get raw data
 			res = ep_radar_base_get_frame_data(protocolHandle,
 											   endpointRadarBase,
 											   1);
-		}
+		};
 	}
 
 	return res;

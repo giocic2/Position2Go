@@ -1,6 +1,7 @@
 # Files under copyright
 documentation/
-include/
+P2G_extract-raw-data_C/include/*
+P2G_raw-data_toolbox/*
 
 # Prerequisites
 *.d
