@@ -4,7 +4,7 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/include/**"
+                "${workspaceFolder}/P2G_extract-raw-data_C/include/**"
             ],
             "defines": [
                 "_DEBUG",
