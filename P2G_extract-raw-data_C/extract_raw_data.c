@@ -43,7 +43,15 @@
 
 #define AUTOMATIC_DATA_TRIGER_TIME_US (1000000)	// get ADC data each 1ms in automatic trigger mode
 
-#define TOTAL_FRAMES (10)
+#define FRAMES (10)
+
+#define SAMPLES_PER_FRAME (4096)
+
+#define TOTAL_SAMPLES (FRAMES * SAMPLES_PER_FRAME)
+
+float ADC_data[TOTAL_SAMPLES];
+int frame_index = 0;
+int done = 0;
 
 
 // called every time ep_radar_base_get_frame_data method is called to return measured time domain signals
@@ -67,7 +75,7 @@ void received_frame_data(void* context,
 
 	// Modified version: samples from all chirps
 	/*
-	for (uint32_t i = 0; i < 4096; i++)
+	for (uint32_t i = 0; i < SAMPLES_PER_FRAME; i++)
 	{
 		printf("ADC sample %d: %f\n", i, frame_info->sample_data[i]);
 		if (i==4095){
@@ -77,6 +85,7 @@ void received_frame_data(void* context,
 	*/
 
 	// Save data to file, without print on terminal
+	/*
 	int written = 0;
 	FILE *f = fopen("..\\P2G_raw-data_C\\raw-data.dat", "a+");
 	written = fwrite(frame_info->sample_data, sizeof(uint8_t), sizeof(frame_info->sample_data), f);
@@ -84,7 +93,19 @@ void received_frame_data(void* context,
 		printf("Error during writing to file!\n");
 	}
 	fclose(f);
-	// better to save in local variable, and then print on file after all frames are acquired
+	*/
+
+	// Better to save in local variable, and then print on file after all frames are acquired
+	int start_index = frame_index * SAMPLES_PER_FRAME;
+	int stop_index = frame_index * SAMPLES_PER_FRAME + SAMPLES_PER_FRAME - 1;
+	for (uint32_t i = 0; i < SAMPLES_PER_FRAME; i++)
+	{
+		ADC_data[start_index+i] = frame_info->sample_data[i];
+	}
+	frame_index++;
+	if (frame_index >= FRAMES){
+		done = 1;
+	}
 }
 
 int radar_auto_connect(void)
@@ -168,13 +189,20 @@ int main(void)
 															endpointRadarBase,
 															0);
 		}
-		while (1)
+		while (done == 0)
 		{
 			// get raw data
 			res = ep_radar_base_get_frame_data(protocolHandle,
 											   endpointRadarBase,
 											   1);
 		};
+		int written = 0;
+		FILE *f = fopen("..\\P2G_raw-data_C\\raw-data.txt", "w+");
+		for (uint32_t i = 0; i < TOTAL_SAMPLES; i++)
+		{
+			fprintf(f, "%f\n", ADC_data[i]);
+		}
+		fclose(f);
 	}
 
 	return res;
