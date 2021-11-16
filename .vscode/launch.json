@@ -24,6 +24,15 @@
                 }
             ],
             "preLaunchTask": "C/C++: gcc.exe build active file"
-        }
+        },
+
+        {
+            "name": "Python: Current File",
+            "request": "launch",
+            "type": "python",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        }    
+
     ]
 }
