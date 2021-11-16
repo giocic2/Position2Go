@@ -2,6 +2,7 @@
 documentation/
 P2G_extract-raw-data_C/include/*
 P2G_raw-data_toolbox/*
+.venv
 
 # Prerequisites
 *.d
