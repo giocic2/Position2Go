@@ -43,7 +43,7 @@
 
 #define AUTOMATIC_DATA_TRIGER_TIME_US (1000000)	// get ADC data each 1ms in automatic trigger mode
 
-#define FRAMES (10)
+#define FRAMES (5)
 
 #define SAMPLES_PER_FRAME (4096)
 
@@ -98,6 +98,7 @@ void received_frame_data(void* context,
 	// Better to save in local variable, and then print on file after all frames are acquired
 	int start_index = frame_index * SAMPLES_PER_FRAME;
 	int stop_index = frame_index * SAMPLES_PER_FRAME + SAMPLES_PER_FRAME - 1;
+	printf("Frame: %d\n", frame_index);
 	for (uint32_t i = 0; i < SAMPLES_PER_FRAME; i++)
 	{
 		ADC_data[start_index+i] = frame_info->sample_data[i];
