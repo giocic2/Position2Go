@@ -89,8 +89,8 @@ for frame in range(FRAMES):
     rangeDopplerMap = np.abs(np.fft.fftshift(np.fft.fftn(datacube[:,:,0], s=(FFT_FREQ_BINS, FFT_FREQ_BINS), axes=(0,1))))
     rangeAxis = np.fft.fftshift(np.fft.fftfreq(FFT_FREQ_BINS))
     dopplerAxis = np.fft.fftshift(np.fft.fftfreq(FFT_FREQ_BINS))
-    half_rangeAxis = np.split(rangeAxis, indices_or_sections=4)[3]
-    half_rangeDopplerMap = np.split(rangeDopplerMap, indices_or_sections=4, axis=0)[3]
+    half_rangeAxis = np.split(rangeAxis, indices_or_sections=2)[1]
+    half_rangeDopplerMap = np.split(rangeDopplerMap, indices_or_sections=2, axis=0)[1]
     # plt.imshow(np.abs(np.fft.fftshift(rangeDopplerMap)))
     df = DataFrame(half_rangeDopplerMap, index=half_rangeAxis, columns=dopplerAxis)
     plt.pcolor(df)
