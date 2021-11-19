@@ -43,7 +43,7 @@
 
 #define AUTOMATIC_DATA_TRIGER_TIME_US (1000000)	// get ADC data each 1ms in automatic trigger mode
 
-#define FRAMES (5)
+#define FRAMES (1)
 
 #define SAMPLES_PER_FRAME (4096)
 

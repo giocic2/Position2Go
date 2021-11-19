@@ -2,10 +2,11 @@ import easygui
 import numpy as np
 import matplotlib.pyplot as plt
 from pandas import DataFrame
+import os.path
 plt.ion()
 
 SAMPLES_PER_CHIRP = 64 # fast-time dimension
-CHIRP_PER_FRAME = 64 # slow-time dimension
+CHIRP_PER_FRAME = 16 # slow-time dimension
 RX_ANTENNAS = 2 # spatial dimension
 CHIRP_TIME = 300e-6 # s
 FRAMES = 1
@@ -18,6 +19,7 @@ while filename == None:
 print(filename)
 
 rawSamples = np.genfromtxt(filename, delimiter = '')
+rawSamples = rawSamples - 0.5
 totalSamples = len(rawSamples)
 samples_in_frame = int(totalSamples / FRAMES)
 
@@ -42,6 +44,8 @@ for frame in range(FRAMES):
     plt.ylabel("Amplitude [% ADC scale]")
     plt.xlabel("Time [s]")
     plt.grid(True)
+    ft_name = os.path.join('./P2G_processed-data', "ft_time.png")
+    plt.savefig(ft_name)
     plt.show()
     plt.pause(1)
     plt.clf()
@@ -55,6 +59,8 @@ for frame in range(FRAMES):
     plt.ylabel("Spectrum magnitude [dB]")
     plt.xlabel("Frequency [Hz]")
     plt.grid(True)
+    ft_name = os.path.join('./P2G_processed-data', "ft_freq.png")
+    plt.savefig(ft_name)
     plt.show()
     plt.pause(1)
     plt.clf()
@@ -68,6 +74,8 @@ for frame in range(FRAMES):
     plt.ylabel("Amplitude [% ADC scale]")
     plt.xlabel("Time [s]")
     plt.grid(True)
+    st_name = os.path.join('./P2G_processed-data', "st_time.png")
+    plt.savefig(st_name)
     plt.show()
     plt.pause(1)
     plt.clf()
@@ -81,6 +89,8 @@ for frame in range(FRAMES):
     plt.ylabel("Spectrum magnitude [dB]")
     plt.xlabel("Frequency [Hz]")
     plt.grid(True)
+    st_name = os.path.join('./P2G_processed-data', "st_freq.png")
+    plt.savefig(st_name)
     plt.show()
     plt.pause(1)
     plt.clf()
@@ -94,6 +104,8 @@ for frame in range(FRAMES):
     # plt.imshow(np.abs(np.fft.fftshift(rangeDopplerMap)))
     df = DataFrame(half_rangeDopplerMap, index=half_rangeAxis, columns=dopplerAxis)
     plt.pcolor(df)
+    rdm_name = os.path.join('./P2G_processed-data', "rdm.png")
+    plt.savefig(rdm_name)
     plt.show()
     plt.pause(5)
     plt.clf()
