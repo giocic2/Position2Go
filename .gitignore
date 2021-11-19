@@ -1,7 +1,8 @@
-# Files under copyright
+# Folders content
 documentation/
 P2G_extract-raw-data_C/include/*
 P2G_raw-data_toolbox/*
+P2G_processed-data/*.png
 .venv
 
 # Prerequisites
