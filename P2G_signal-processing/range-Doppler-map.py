@@ -19,7 +19,6 @@ while filename == None:
 print(filename)
 
 rawSamples = np.genfromtxt(filename, delimiter = '')
-rawSamples = rawSamples - 0.5
 totalSamples = len(rawSamples)
 samples_in_frame = int(totalSamples / FRAMES)
 
@@ -34,9 +33,12 @@ for frame in range(FRAMES):
             for spatialIndex in range(RX_ANTENNAS):
                 rawSamples_index = frame * samples_in_frame + 2 * spatialIndex + 4 * fastTimeIndex + slowTimeIndex * SAMPLES_PER_CHIRP
                 datacube[fastTimeIndex, slowTimeIndex, spatialIndex] = np.add(rawSamples[rawSamples_index], 1j*rawSamples[rawSamples_index + 1])
-
+    
     # A fast-time domain signal
     fastTime_signal = datacube[:,0,0]
+    # Preprocessing on fast-time signal
+    # DC offset removal
+    fastTime_signal = fastTime_signal - np.mean(fastTime_signal)
     # Time
     ft_timeAxis = np.arange(start=0, stop=SAMPLES_PER_CHIRP*sampling_period, step=sampling_period)
     plt.plot(ft_timeAxis, np.real(fastTime_signal))
@@ -52,7 +54,7 @@ for frame in range(FRAMES):
     # Frequency
     ft_FFT = np.fft.fft(fastTime_signal, n=FFT_FREQ_BINS)
     ft_FFT_magn = np.absolute(1 / len(fastTime_signal) * ft_FFT)
-    ft_FFT_dB = 10 * np.log10(ft_FFT_magn)
+    ft_FFT_dB = 20 * np.log10(ft_FFT_magn)
     freqAxis = np.fft.fftfreq(FFT_FREQ_BINS)
     # freqAxis_Hz = freqAxis * sampling_frequency
     plt.plot(np.fft.fftshift(freqAxis), np.fft.fftshift(ft_FFT_dB))
@@ -67,6 +69,9 @@ for frame in range(FRAMES):
 
     # A slow-time domain signal
     slowTime_signal = datacube[0,:,0]
+    # Preprocessing on fast-time signal
+    # DC offset removal
+    slowTime_signal = slowTime_signal - np.mean(slowTime_signal)
     # Time
     st_timeAxis = np.arange(start=0, stop=SAMPLES_PER_CHIRP*CHIRP_PER_FRAME*sampling_period, step=sampling_period*SAMPLES_PER_CHIRP)
     plt.plot(st_timeAxis, np.real(slowTime_signal))
@@ -82,10 +87,12 @@ for frame in range(FRAMES):
     # Frequency
     st_FFT = np.fft.fft(slowTime_signal, n=FFT_FREQ_BINS)
     st_FFT_magn = np.absolute(1 / len(slowTime_signal) * st_FFT)
-    st_FFT_dB = 10 * np.log10(st_FFT_magn)
+    st_FFT_dB = 20 * np.log10(st_FFT_magn)
+    st_FFT_phase = np.angle(1 / len(slowTime_signal) * st_FFT)
     freqAxis = np.fft.fftfreq(FFT_FREQ_BINS)
     # freqAxis_Hz = freqAxis * sampling_frequency
     plt.plot(np.fft.fftshift(freqAxis), np.fft.fftshift(st_FFT_dB))
+    plt.plot(np.fft.fftshift(freqAxis), np.fft.fftshift(st_FFT_phase))
     plt.ylabel("Spectrum magnitude [dB]")
     plt.xlabel("Frequency [Hz]")
     plt.grid(True)
